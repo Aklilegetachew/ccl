@@ -73,6 +73,7 @@ exports.startProduction = (req, res, next) => {
 exports.showproductionOrder = (req, res, next) => {
   productionModel.showProductionOrder(req.body.Startdate).then((result) => {
     if (result[0]) {
+      // console.log(result[1]);
       res.status(200).json(result[1]);
     } else {
       res.status(400).json(result[1]);

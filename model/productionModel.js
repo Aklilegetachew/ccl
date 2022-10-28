@@ -8,15 +8,18 @@ module.exports = class productionModel {
     return dateString + randomness;
   }
 
-  static addSummery (data){
-    return db.execute("INSERT INTO summery(ProductionID, finishedID) VALUES (?,?)", [
-      data.productionID,
-      data.finishedID
-    ]).then((result)=>{
-      return true
-    }).catch((err)=>{
-      return err
-    })
+  static addSummery(data) {
+    return db
+      .execute("INSERT INTO summery(ProductionID, finishedID) VALUES (?,?)", [
+        data.productionID,
+        data.finishedID,
+      ])
+      .then((result) => {
+        return true;
+      })
+      .catch((err) => {
+        return err;
+      });
   }
 
   static completeOrder(data) {
@@ -38,14 +41,17 @@ module.exports = class productionModel {
       .then((result) => {
         const toArray = [];
         toArray.push(data);
-        return axios.post("http://localhost:59000/addnewPurchased", {
-          toArray,
-        }).then((respo)=>{
-          return respo
-        })
-      }).catch((err)=>{
-        return err;
+        return axios
+          .post("http://localhost:59000/addnewPurchased", {
+            toArray,
+          })
+          .then((respo) => {
+            return respo;
+          });
       })
+      .catch((err) => {
+        return err;
+      });
   }
 
   static statusEnd(id) {
@@ -216,9 +222,38 @@ module.exports = class productionModel {
   }
 
   static showProductionOrder(startDate) {
+    // SELECT batch_formula.*, production_order.*, custome_batch.* FROM batch_formula ,production_order, custome_batch WHERE  batch_formula.id =production_order.batch_id || production_order.batch_id = custome_batch.id
     return db
-      .execute("SELECT * FROM production_order")
-      .then((respo) => {
+    .execute("SELECT * FROM production_order")
+    .then((respo) => {
+      const composerArray = [];
+      respo[0].forEach((elemnts) => {
+          if (elemnts.custom_batch_id == 0) {
+            db.execute(
+              "SELECT * FROM batch_formula WHERE id = '" +
+                elemnts.batch_id +
+                "'"
+            ).then((res) => {
+              elemnts.rawmat_list = res[0][0].rawmat_list;
+              
+              composerArray.push(composerArray);
+            });
+          } else {
+            db.execute(
+              "SELECT * FROM custome_batch WHERE id = '" +
+                elemnts.custom_batch_id +
+                "'"
+            ).then((res) => {
+              elemnts.raw_mat_needed = res[0].raw_mat_needed;
+              elemnts.expected_fin_qty = res[0].expected_fin_qty;
+              elemnts.expected_waste_quan = res[0].expected_waste_quan;
+              elemnts.custom_batch_id = res[0].custom_batch_id;
+
+              composerArray.push(elemnts);
+            });
+          }
+        });
+        console.log(composerArray);
         return [true, respo[0]];
       })
       .catch((err) => {
