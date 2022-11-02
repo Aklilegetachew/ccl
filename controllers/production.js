@@ -70,13 +70,24 @@ exports.startProduction = (req, res, next) => {
   // make report and summery and status Finished
 };
 
-exports.showproductionOrder = (req, res, next) => {
-  productionModel.showProductionOrder(req.body.Startdate).then((result) => {
-    if (result[0]) {
-      // console.log(result[1]);
-      res.status(200).json(result[1]);
-    } else {
-      res.status(400).json(result[1]);
-    }
-  });
+exports.showproductionOrder = async (req, res, next) => {
+  const fromReg = [];
+  const fromCus = [];
+  // productionModel.allProduction().then(async (result) => {
+  //   // result.forEach(async (elemnts) => {
+  //   // if (result[0) {
+  //   //   // console.log(result[1]);
+  //   //   res.status(200).json(result[1]);
+  //   // } else {
+  //   //   res.status(40).json(result[1]);
+
+  // });
+  const regArray = await productionModel.showProductionOrderReg();
+  const cusArray = await productionModel.showProductionOrderCustom();
+
+  //  console.log("regular", regArray)
+  //  console.log("cus", cusArray)
+
+  const allRes = regArray.concat(cusArray);
+  console.log("all", allRes);
 };

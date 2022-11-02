@@ -2,6 +2,7 @@ const db = require("../util/db");
 const axios = require("axios");
 
 module.exports = class productionModel {
+  composerArray = new Array();
   static uniqueId() {
     const dateString = Date.now().toString(36);
     const randomness = Math.random().toString(36).substr(2);
@@ -221,43 +222,91 @@ module.exports = class productionModel {
     }
   }
 
-  static showProductionOrder(startDate) {
-    // SELECT batch_formula.*, production_order.*, custome_batch.* FROM batch_formula ,production_order, custome_batch WHERE  batch_formula.id =production_order.batch_id || production_order.batch_id = custome_batch.id
+  static fromRegularBatch(elemnts) {
     return db
-    .execute("SELECT * FROM production_order")
-    .then((respo) => {
-      const composerArray = [];
-      respo[0].forEach((elemnts) => {
-          if (elemnts.custom_batch_id == 0) {
-            db.execute(
-              "SELECT * FROM batch_formula WHERE id = '" +
-                elemnts.batch_id +
-                "'"
-            ).then((res) => {
-              elemnts.rawmat_list = res[0][0].rawmat_list;
-              
-              composerArray.push(composerArray);
-            });
-          } else {
-            db.execute(
-              "SELECT * FROM custome_batch WHERE id = '" +
-                elemnts.custom_batch_id +
-                "'"
-            ).then((res) => {
-              elemnts.raw_mat_needed = res[0].raw_mat_needed;
-              elemnts.expected_fin_qty = res[0].expected_fin_qty;
-              elemnts.expected_waste_quan = res[0].expected_waste_quan;
-              elemnts.custom_batch_id = res[0].custom_batch_id;
-
-              composerArray.push(elemnts);
-            });
-          }
-        });
-        console.log(composerArray);
-        return [true, respo[0]];
-      })
-      .catch((err) => {
-        return [false, err];
+      .execute(
+        "SELECT * FROM batch_formula WHERE id = '" + elemnts.batch_id + "'"
+      )
+      .then((res) => {
+        elemnts.rawmat_list = res[0][0].rawmat_list;
+        return elemnts;
       });
   }
+
+  static fromCustomBatch(elemnts) {
+    return db
+      .execute(
+        "SELECT * FROM custome_batch WHERE id = '" +
+          elemnts.custom_batch_id +
+          "'"
+      )
+      .then((res) => {
+        elemnts.raw_mat_needed = res[0].raw_mat_needed;
+        elemnts.expected_fin_qty = res[0].expected_fin_qty;
+        elemnts.expected_waste_quan = res[0].expected_waste_quan;
+        elemnts.custom_batch_id = res[0].custom_batch_id;
+        return elemnts;
+      });
+  }
+
+  static allProduction() {
+    return db
+      .execute("SELECT * FROM production_order")
+      .then((respo) => {
+        return respo[0];
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  //  static async showProductionOrder(startDate) {
+
+  //   db.execute("")
+  // SELECT batch_formula.*, production_order.*, custome_batch.* FROM batch_formula ,production_order, custome_batch WHERE  batch_formula.id =production_order.batch_id || production_order.batch_id = custome_batch.id
+  //  const productionCollection = await this.allProduction();
+  // const elementsarr = [];
+  //    productionCollection.forEach(async (elemnts) => {
+  //      if (elemnts.custom_batch_id == 0) {
+  //  db.execute("SELECT production_order.*, batch_formula.rawmat_list, batch_formula.id FROM production_order, batch_formula WHERE batch_formula.id =production_order.batch_id").then((res)=>{
+  //   return res[0];
+  //  })
+  //     const resultArr = await this.fromRegularBatch(elemnts);
+  //     console.log(resultArr);
+  //     elementsarr.push(resultArr);
+  //  } else {
+  //     const resultArr2 = await this.fromCustomBatch(elemnts);
+  //     elementsarr.push(resultArr2);
+  //  }
+  // });
+  // console.log(elementsarr);
+  // return [true, elementsarr];
+  //  }
+  static showProductionOrderReg() {
+    return db
+      .execute(
+        "SELECT production_order.*, batch_formula.rawmat_list, batch_formula.id FROM production_order, batch_formula WHERE batch_formula.id =production_order.batch_id"
+      )
+      .then((respo) => {
+        return respo[0];
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  static showProductionOrderCustom() {
+    return db
+      .execute(
+        "SELECT production_order.*, custome_batch.raw_mat_needed, custome_batch.id FROM production_order, custome_batch WHERE production_order.custom_batch_id = custome_batch.custom_batch_id"
+      )
+      .then((respo) => {
+        return respo[0];
+      })
+      .catch((err) => {
+        return err;
+      });
+  }
+
+  // }
 };
