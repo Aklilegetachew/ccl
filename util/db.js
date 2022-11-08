@@ -9,18 +9,18 @@ const config =  require('../config');
 //   password: "MKt&eo]Gv6rh",
 // });
 
-const pool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  database: "production",
-  password: "",
-});
+//const pool = mysql.createPool({
+//  host: "localhost",
+//  user: "root",
+ // database: "production",
+ // password: "",
+//});
 
-// const pool = mysql.createPool({
-//   host: "localhost",
-//   user: config.DBUSER,
-//   database: config.DBNAME,
-//   password: config.DBPASSWORD,
-// });
+const pool = mysql.createPool({
+	host: "localhost",
+   user: config.DBUSER,
+   database: config.DBNAME,
+   password: config.DBPASSWORD,
+ });
 
 module.exports = pool.promise();
