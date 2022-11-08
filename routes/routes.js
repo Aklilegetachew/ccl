@@ -11,7 +11,7 @@ router.post("/selectbatch", batchCont.selectBatch);
 /// production orders
 
 router.post("/addProductionOrder", production.addNewproductionOrder);
-router.post("/showProductionOrder", production.showproductionOrder);
+router.get("/showProductionOrder", production.showproductionOrder);
 router.post("/startProduction", production.startProduction);
 
 router.post("/addProductProduced", production.productFinshed);
