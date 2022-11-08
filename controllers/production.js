@@ -90,4 +90,5 @@ exports.showproductionOrder = async (req, res, next) => {
 
   const allRes = regArray.concat(cusArray);
   console.log("all", allRes);
+  res.status(200).json(allRes);
 };

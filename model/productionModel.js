@@ -205,7 +205,7 @@ module.exports = class productionModel {
             newData.fin_product,
             newData.fin_spec,
             newData.fin_quan,
-            newData.batch_id,
+            "",
             newData.start_dateTime,
             newData.end_dateTime,
             newData.batch_mult,
