@@ -12,7 +12,7 @@ exports.addBatch = (req, res, next) => {
 
 exports.showBatch = (req, res, next) => {
   batchModule.showAllBatch().then((result) => {
-    res.status(200).json(result[0]);
+    res.status(200).json(result);
   });
 };
 

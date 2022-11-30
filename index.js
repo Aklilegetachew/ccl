@@ -8,7 +8,7 @@ const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 
-const port = 42000;
+const port = 3002;
 app.use(routes);
 
 app.listen(port, () => {
